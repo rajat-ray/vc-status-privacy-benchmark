@@ -4,7 +4,9 @@ ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/"results"/"consolidated_corre
 df=pd.read_csv(ROOT/"results"/"phase5_corrected"/"phase5_corrected_runs.csv")
 def bci(x,reps=5000,seed=20261004):
  x=np.asarray(x,float); rng=np.random.default_rng(seed)
- means=np.array([rng.choice(x,len(x),replace=True).mean() for _ in range(reps)])
+ # Vectorized bootstrap: deterministic and much faster than Python-level resampling loops.
+ idx=rng.integers(0,len(x),size=(reps,len(x)))
+ means=x[idx].mean(axis=1)
  return float(x.mean()),float(np.quantile(means,.025)),float(np.quantile(means,.975))
 recs=[]
 for s,g in df.groupby("strategy"):
