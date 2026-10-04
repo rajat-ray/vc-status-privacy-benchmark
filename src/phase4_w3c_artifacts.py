@@ -9,7 +9,8 @@ for n in POPS:
   rc=min(rc0,n)
   for run in range(RUNS):
    rng=np.random.default_rng(20261004+n+rc0*31+run)
-   idx=rng.choice(cap,size=rc,replace=False) if rc else np.array([],dtype=np.int64)
+   issued=rng.choice(cap,size=n,replace=False) if n < cap else np.arange(cap,dtype=np.int64)
+   idx=rng.choice(issued,size=rc,replace=False) if rc else np.array([],dtype=np.int64)
    buf=np.zeros(nb,dtype=np.uint8)
    if rc: np.bitwise_or.at(buf,idx//8,(1<<(7-(idx%8))).astype(np.uint8))
    t0=time.perf_counter_ns()
@@ -32,6 +33,7 @@ agg=df.groupby(["population","capacity","revoked"]).agg(runs=("run","count"),gzi
  all_checks_ok=("checked_ok","all")).reset_index()
 agg.to_csv(OUT/"phase4_reproduced_summary.csv",index=False)
 meta={"implementation":["minimum capacity 131072","MSB/left-most bit index convention","GZIP level 9 mtime=0","multibase-style u prefix + base64url no padding","unsigned BitstringStatusListCredential-shaped JSON"],
+"index_assignment":"n issued credentials occupy unique random positions within capacity; revoked positions are sampled only from issued positions.",
 "not_implemented":["VC proof/signature","HTTP/CDN retrieval"],"boundary":"Local encoding/decoding artifact benchmark, not a complete signed deployment."}
 (OUT/"phase4_reproduced_metadata.json").write_text(json.dumps(meta,indent=2))
 print(agg[(agg.population.isin([100000,1000000])) & (agg.revoked.isin([10,100,1000,5000]))].to_string(index=False))
