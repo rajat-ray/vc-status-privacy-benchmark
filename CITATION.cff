@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software or research package, please cite it using the metadata below."
+title: "Beyond Herd Privacy: VC Status Privacy Benchmark"
+type: software
+authors:
+  - family-names: Ray
+    given-names: Rajat
+    orcid: "https://orcid.org/0009-0008-1948-3264"
+repository-code: "https://github.com/rajat-ray/vc-status-privacy-benchmark"
+abstract: "Reproducibility package for measuring temporal linkability and privacy-freshness trade-offs in Verifiable Credential status systems."
+keywords:
+  - verifiable credentials
+  - privacy
+  - revocation
+  - status list
+  - linkability
+  - digital identity
+license: MIT
+version: "0.9.0-pre-freeze"
+date-released: 2026-10-04
