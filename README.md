@@ -20,6 +20,7 @@ The project is designed around W3C Bitstring Status List-style public state. It 
 | Phase 1 / 1B | Longitudinal differencing and candidate-set narrowing | `src/phase1.py`, `results/phase1b/` |
 | Corrected Phase 5 | Observable-only temporal attacker and publication-policy comparison | `src/phase5_corrected_observable_attacker.py`, `results/phase5_corrected/` |
 | Phase 7 | Corrected timing/event-density/clustering sensitivity and random delay | `src/phase7_corrected_sensitivity.py`, `results/phase7_corrected_sensitivity/` |
+| Phase 7 | Timing/event-density/clustering sensitivity and random-delay analysis | `src/phase7_corrected_sensitivity.py`, `results/phase7_corrected_sensitivity/` |
 | Corrected statistics | Bootstrap CIs and paired policy comparison | `src/corrected_statistics.py`, `results/consolidated_corrected/` |
 | Reproduced Phase 4 | Actual bitstring/GZIP/base64url artifact benchmark | `src/phase4_w3c_artifacts.py`, `results/phase4_reproduced/` |
 | Phase 6 | Local engineering feasibility | `results/phase6_engineering/` |
@@ -41,7 +42,7 @@ pip install -r requirements.txt
 python reproduce.py
 ```
 
-The reproduction workflow regenerates corrected Phase 5, reproduced Phase 4, Phase 7 sensitivity/random-delay outputs, and corrected bootstrap statistics.
+The reproduction workflow regenerates corrected Phase 5, reproduced Phase 4, corrected Phase 7 sensitivity/random-delay outputs, and corrected bootstrap statistics, then checks core invariants.
 
 ## Scope boundaries
 
@@ -59,3 +60,12 @@ See `CITATION.cff`.
 ## License
 
 Research code is provided under the MIT License. Manuscript text and generated research results remain attributable to the author.
+
+
+## Tested environment
+
+The final pre-freeze audit passed on Python 3.13.5 with the exact package versions recorded in `requirements-lock.txt` and `environment.json`. `python reproduce.py` completed successfully in the audited environment and regenerated the authoritative corrected Phase 5, Phase 4, Phase 7, and corrected statistical outputs.
+
+## Versioning
+
+`v1.0.0-submission` is the intended immutable scholarly submission snapshot. Development after that snapshot should use later tags rather than modifying the frozen release.
