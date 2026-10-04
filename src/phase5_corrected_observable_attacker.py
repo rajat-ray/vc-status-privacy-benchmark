@@ -54,9 +54,14 @@ for seed in SEEDS:
     rng=np.random.default_rng(seed)
     count=int(rng.poisson(N*DAILY_RATE))
     times=np.sort(rng.uniform(0,DURATION,count))
-    indexes=rng.choice(CAP,size=count,replace=False)
+    # Preserve the original privacy-analysis RNG stream while decoupling actual artifact index assignment.
+    _rng_stream_compat=rng.choice(CAP,size=count,replace=False)
     targets=np.where(rng.random(count)<KNOWLEDGE)[0]
     aux=times[targets]+rng.normal(0,SIGMA,len(targets))
+    # Independent stream for index allocation so artifact-position semantics do not alter privacy draws.
+    idx_rng=np.random.default_rng(seed + 900_000_001)
+    issued_indexes=idx_rng.choice(CAP,size=N,replace=False)
+    indexes=idx_rng.choice(issued_indexes,size=count,replace=False)
     for name,cfg in STRATEGIES:
         pubs=publication_times(times,cfg)
         obs=np.round(pubs,9); epochs=np.unique(obs)
@@ -108,6 +113,7 @@ meta={"correction":"Candidate-specific latent true event times are excluded from
  "attacker_does_not_observe":["true event time of each candidate index"],
  "tie_handling":"Expected Top-k inclusion probability under random ordering within equal-posterior ties.",
  "adaptive_likelihood_boundary":"Uses only observable publication epoch plus known Dmax support; does not infer hidden trigger event identity.",
+ "index_assignment":"N issued credentials are assigned unique random positions within CAP; lifecycle events select only among issued positions.",
  "status":"Corrected primary analysis; supersedes Phase2/2B/3 temporal Top-k claims that used latent candidate event times."}
 (OUT/"phase5_corrected_metadata.json").write_text(json.dumps(meta,indent=2))
 print(agg.to_string(index=False))
