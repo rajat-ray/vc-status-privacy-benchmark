@@ -1,0 +1,8 @@
+{
+  "correction": "Candidate-specific latent true event times are excluded from attacker observations.",
+  "attacker_observes": ["successive publication epochs","changed pseudonymous indexes per epoch","noisy identity-linked target lifecycle time for A3 targets"],
+  "attacker_does_not_observe": ["true event time of each candidate index"],
+  "tie_handling": "Expected Top-k inclusion probability under random ordering within equal-posterior ties.",
+  "adaptive_likelihood_boundary": "Uses only observable publication epoch plus known Dmax support; does not infer hidden trigger event identity.",
+  "status": "Corrected primary analysis; supersedes Phase2/2B/3 temporal Top-k claims that used latent candidate event times."
+}
