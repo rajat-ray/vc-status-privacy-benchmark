@@ -54,26 +54,25 @@ for seed in SEEDS:
       rng=np.random.default_rng(seed + int(rate*1e7) + (100000 if pattern=="clustered" else 0))
       times=gen_times(rng,count,pattern)
       targets=rng.choice(len(times),size=max(1,int(.10*len(times))),replace=False)
+      z=rng.normal(0,1,len(targets))
       for sigma in SIGMAS:
-        aux=times[targets]+rng.normal(0,sigma,len(targets))
+        aux=times[targets]+sigma*z
         for si,(name,cfg) in enumerate(STRATEGIES):
           prng=np.random.default_rng(seed+si*99991+int(rate*1e8)+(7 if pattern=="clustered" else 0))
           pubs=pubs_for(times,cfg,prng)
-          epochs=np.unique(np.round(pubs,9)); groups=[np.where(np.round(pubs,9)==e)[0] for e in epochs]
+          rounded=np.round(pubs,9)
+          epochs, inverse, sizes=np.unique(rounded,return_inverse=True,return_counts=True)
           e_top1=[]; e_top5=[]; e_eas=[]
           for tid,a in zip(targets,aux):
-            ws=[]; ids=[]
-            for pt,g in zip(epochs,groups):
-              L=epoch_likelihood(a,float(pt),cfg,sigma)
-              ws.extend([L]*len(g)); ids.extend(g.tolist())
-            w=np.asarray(ws,float); w/=w.sum(); ids=np.asarray(ids)
-            pos=np.where(ids==tid)[0]
-            if len(pos)!=1: continue
-            ptar=w[pos[0]]
-            greater=int(np.sum(w>ptar+1e-15)); tied=int(np.sum(np.isclose(w,ptar,rtol=0,atol=1e-15)))
+            # One likelihood per observable epoch; every candidate in that epoch shares it.
+            L=np.asarray([epoch_likelihood(a,float(pt),cfg,sigma) for pt in epochs],float)
+            Z=float(np.sum(L*sizes)); w_epoch=L/Z
+            target_epoch=inverse[tid]; ptar=w_epoch[target_epoch]
+            greater=int(np.sum(sizes[w_epoch>ptar+1e-15]))
+            tied=int(np.sum(sizes[np.isclose(w_epoch,ptar,rtol=0,atol=1e-15)]))
             e_top1.append(max(0,min(1,(1-greater)/tied)))
             e_top5.append(max(0,min(1,(5-greater)/tied)))
-            e_eas.append(1/np.sum(w*w))
+            e_eas.append(1/float(np.sum(sizes*w_epoch*w_epoch)))
           rows.append({"seed":seed,"rate":rate,"pattern":pattern,"sigma_min":sigma,"strategy":name,
                        "events":count,"publications":len(epochs),"mean_delay_min":float(np.mean(pubs-times)),
                        "top1_expected":float(np.mean(e_top1)),"top5_expected":float(np.mean(e_top5)),
@@ -88,6 +87,8 @@ meta={"purpose":"Corrected observable-only sensitivity matrix and corrected rand
       "candidate_latent_times_used":False,
       "conditions":{"population":N,"rates":RATES,"patterns":PATTERNS,"sigma_minutes":SIGMAS,"seeds":30},
       "random_delay":"Independent U(0,60m) publication delay; observer sees each resulting publication time and knows the delay distribution.",
+      "sigma_pairing":"The same standard-normal target noise draw z is scaled by each sigma within a condition for paired timing-uncertainty comparison.",
+      "implementation":"Epoch-level likelihoods are evaluated once per target and weighted by observable epoch candidate counts; this is algebraically equivalent to assigning the same likelihood to every candidate within an epoch.",
       "cluster_model":"70% Gaussian bursts around 09:00, 13:00, 18:00 with SD 20m; 30% uniform background.",
       "boundary":"Synthetic sensitivity study; results are conditional on declared event and auxiliary-timing models."}
 (OUT/"phase7_metadata.json").write_text(json.dumps(meta,indent=2))
