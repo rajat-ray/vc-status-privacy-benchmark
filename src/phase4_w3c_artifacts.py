@@ -6,7 +6,8 @@ rows=[]
 for n in POPS:
  cap=max(131072,n); nb=(cap+7)//8
  for rc0 in COUNTS:
-  rc=min(rc0,n)
+  if rc0 > n: continue
+  rc=rc0
   for run in range(RUNS):
    rng=np.random.default_rng(20261004+n+rc0*31+run)
    issued=rng.choice(cap,size=n,replace=False) if n < cap else np.arange(cap,dtype=np.int64)
