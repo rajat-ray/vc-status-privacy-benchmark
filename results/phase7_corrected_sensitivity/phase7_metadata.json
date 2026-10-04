@@ -1,0 +1,8 @@
+{
+  "purpose": "Corrected observable-only sensitivity matrix and corrected random-delay experiment.",
+  "candidate_latent_times_used": false,
+  "conditions": {"population":100000,"rates":[0.0005,0.002,0.005],"patterns":["uniform","clustered"],"sigma_minutes":[0.5,2.0,10.0],"seeds":30},
+  "random_delay": "Independent U(0,60m) publication delay; observer sees each resulting publication time and knows the delay distribution.",
+  "cluster_model": "70% Gaussian bursts around 09:00, 13:00, 18:00 with SD 20m; 30% uniform background.",
+  "boundary": "Synthetic sensitivity study; results are conditional on declared event and auxiliary-timing models."
+}
