@@ -1,0 +1,9 @@
+{
+  "mean_delay_min":{"adaptive_minus_fixed60_mean":-12.360310456517558,"ci95":[-12.751880736600805,-11.986272401361083]},
+  "top1_expected":{"adaptive_minus_fixed60_mean":0.07138467664316869,"ci95":[0.06410963335798223,0.07903528311995647]},
+  "top5_expected":{"adaptive_minus_fixed60_mean":0.2247366146684424,"ci95":[0.21073671929052723,0.2390583626401733]},
+  "eas_mean":{"adaptive_minus_fixed60_mean":-3.5613679896589314,"ci95":[-3.830077833976332,-3.289350580798799]},
+  "eas_median":{"adaptive_minus_fixed60_mean":-3.2520953275751556,"ci95":[-3.4822725126343737,-3.0128126949064247]},
+  "total_vc_bytes":{"adaptive_minus_fixed60_mean":11387.7,"ci95":[11032.823333333334,11712.636666666667]},
+  "delay_relative_reduction":0.4128346064738626
+}
