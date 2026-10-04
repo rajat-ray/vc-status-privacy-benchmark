@@ -69,3 +69,13 @@ The final pre-freeze audit passed on Python 3.13.5 with the exact package versio
 ## Versioning
 
 `v1.0.0-submission` is the intended immutable scholarly submission snapshot. Development after that snapshot should use later tags rather than modifying the frozen release.
+
+## Archival DOI
+
+The persistent scholarly snapshot for the submission reproducibility package is archived on Zenodo:
+
+**DOI:** `10.5281/zenodo.23134118`  
+**Archived release:** `v1.0.1-archive`  
+**DOI:** https://doi.org/10.5281/zenodo.23134118
+
+The Zenodo record is the canonical archival snapshot. The GitHub repository may continue to evolve after the archived release.
