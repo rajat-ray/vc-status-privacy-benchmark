@@ -1,0 +1,19 @@
+{
+  "paper": "Temporal Herd Privacy",
+  "freeze_date": "2026-10-06",
+  "v5_source_commit": "fe7403d8c82193682a99523788c8208c272e6f7d",
+  "components": {
+    "thp_v5": "Publication-grade confirmation: 3150 rows, 30 seeds, fixed cohort, A1/A2/A3, 7 horizons, 5 publication policies.",
+    "phase5_corrected": "Primary observable-only privacy/freshness experiment; 30 seeds; publication policy, delay, Top-k, EAS, artifact bytes and local encode time.",
+    "phase7_corrected": "Sensitivity study over event rates, uniform/clustered patterns and timing uncertainty. Full summary CSV was not present in the research branch during freeze assembly; do not claim it is included until separately recovered."
+  },
+  "reconciliation_rule": "v5 and Phase5 answer different estimands and use different population models. Present them side-by-side; never pool or numerically combine them.",
+  "claim_boundaries": [
+    "Synthetic controlled benchmark; not real-world prevalence.",
+    "THP adapts established entropy/effective-anonymity measurement.",
+    "A1=A2 is a retained null under the declared observable-only model.",
+    "A3 includes bounded prior candidate elimination and is not purely status-system leakage.",
+    "Phase5 local encoding cost is not Internet/network latency.",
+    "Publication aggregation has negligible effect on v5 unconditional THP but increases event-conditional ambiguity; Phase5 separately shows a privacy-freshness-resource trade-off for known lifecycle targets."
+  ]
+}
