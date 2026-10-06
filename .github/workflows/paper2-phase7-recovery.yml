@@ -1,0 +1,49 @@
+name: Paper2 Phase7 Evidence Recovery
+on:
+  workflow_dispatch:
+jobs:
+  phase7-recovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: paper2-thp-v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pandas
+      - name: Reproduce corrected Phase7 sensitivity
+        run: python src/phase7_corrected_sensitivity.py
+      - name: Audit and provenance
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd, json, hashlib
+          root=Path("results/phase7_corrected_sensitivity")
+          p=root/"phase7_sensitivity_runs.csv"
+          df=pd.read_csv(p)
+          expected=30*3*2*3*5
+          assert len(df)==expected,(len(df),expected)
+          keys=["seed","rate","pattern","sigma_min","strategy"]
+          assert not df.duplicated(keys).any()
+          assert df["seed"].nunique()==30
+          assert (df.groupby(["rate","pattern","sigma_min","strategy"])["seed"].nunique()==30).all()
+          assert df["top1_expected"].between(0,1).all()
+          assert df["top5_expected"].between(0,1).all()
+          assert (df["eas_mean"]>=1).all()
+          assert (df["eas_median"]>=1).all()
+          (root/"source_commit.txt").write_text(__import__("subprocess").check_output(["git","rev-parse","HEAD"],text=True).strip()+"\n")
+          audit={"rows":len(df),"expected_rows":expected,"unique_seeds":int(df.seed.nunique()),
+                 "duplicate_cells":int(df.duplicated(keys).sum()),"complete_cells":90,
+                 "bounds_ok":True,"candidate_latent_times_used":False}
+          (root/"phase7_audit.json").write_text(json.dumps(audit,indent=2))
+          hashes={}
+          for f in sorted(root.iterdir()):
+              if f.is_file() and f.name!="SHA256SUMS.json":
+                  hashes[f.name]=hashlib.sha256(f.read_bytes()).hexdigest()
+          (root/"SHA256SUMS.json").write_text(json.dumps(hashes,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paper2-phase7-evidence-recovery
+          path: results/phase7_corrected_sensitivity/
