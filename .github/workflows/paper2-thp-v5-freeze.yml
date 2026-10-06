@@ -1,0 +1,36 @@
+name: Paper2 THP v5 Freeze
+on:
+  workflow_dispatch:
+jobs:
+  thp-v5-freeze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: paper2-thp-v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pandas
+      - name: Reproduce preregistered v4 evidence
+        run: python src/thp_preregistered_v4.py
+      - name: Run v5 publication audit and statistics
+        run: python src/thp_v5_publication.py
+      - name: Capture provenance
+        run: |
+          mkdir -p results/thp_v5_publication
+          git rev-parse HEAD > results/thp_v5_publication/source_commit.txt
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          root=Path("results/thp_v5_publication")
+          hashes={}
+          for p in sorted(root.iterdir()):
+              if p.is_file() and p.name!="SHA256SUMS.json":
+                  hashes[p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
+          (root/"SHA256SUMS.json").write_text(json.dumps(hashes,indent=2,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: thp-v5-publication-freeze
+          path: results/thp_v5_publication/
