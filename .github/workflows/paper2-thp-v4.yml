@@ -1,0 +1,19 @@
+name: Paper2 THP v4
+on:
+  workflow_dispatch:
+jobs:
+  thp-v4:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: paper2-thp-v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pandas
+      - run: python src/thp_preregistered_v4.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: thp-preregistered-v4
+          path: results/thp_preregistered_v4/
